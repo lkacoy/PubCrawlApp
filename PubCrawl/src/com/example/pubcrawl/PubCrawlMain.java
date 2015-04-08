@@ -12,5 +12,6 @@ public class PubCrawlMain extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pub_crawl_main);
 		//test comment from Lorenzo
+		//a better test comment from Jared
 	}
 }
