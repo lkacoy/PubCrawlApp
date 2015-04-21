@@ -1,6 +1,6 @@
 package com.example.pubcrawl;
 
-import com.course.example.browserview.R;
+import com.example.pubcrawl.R;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -15,6 +15,7 @@ public final class R {
     }
     public static final class id {
         public static final int input=0x7f060000;
+        public static final int web_view=0x7f060001;
     }
     public static final class layout {
         public static final int activity_pub_crawl_main=0x7f030000;

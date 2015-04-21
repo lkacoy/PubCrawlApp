@@ -1,4 +1,4 @@
-package com.example.assignment5;
+package com.example.pubcrawl;
 
 /*
 import com.google.android.gms.maps.GoogleMap;
