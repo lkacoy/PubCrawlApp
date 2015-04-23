@@ -15,5 +15,7 @@ public class PubCrawlMain extends Activity {
 		//a better test comment from Jared
 		//This is going to be a great couple weeks! - Anthony
 		//really hoping this works -Lexi
+		
+		//Testing to see if Re-Mapping the Git Project worked - Anthony
 	}
 }
