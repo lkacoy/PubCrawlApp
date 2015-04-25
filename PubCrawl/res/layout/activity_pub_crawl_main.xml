@@ -21,6 +21,49 @@
                     android:id="@android:id/tabcontent"
                     android:layout_height="fill_parent"
                      android:layout_width="fill_parent">
+                     
+                     <!-- first tab -->
+						<RelativeLayout android:id="@+id/tab1"
+						android:orientation="vertical" android:layout_width="match_parent"
+						android:layout_height="match_parent">
+				  <include 
+      					android:id="@+id/map"
+        				android:layout_width="match_parent"
+        				android:layout_height="match_parent"
+        				layout="@layout/map_frag" />
+			</RelativeLayout>
+			
+						<!--  second tab -->
+			<RelativeLayout android:id="@+id/tab2"
+				android:orientation="vertical" android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<RelativeLayout android:orientation="horizontal"
+					android:layout_width="match_parent" android:layout_height="wrap_content">
+					<EditText
+       					android:id="@+id/input"
+       					android:layout_width="match_parent"
+       					android:layout_height="wrap_content"
+        				android:background="#FFFFFFFF"
+        				android:hint="Enter data here"
+        				android:inputType="text" />
+					<ListView
+        				android:id="@android:id/list"
+        				android:layout_width="match_parent"
+        				android:layout_height="match_parent"
+        				android:layout_below="@id/input"
+        				android:background="#FFFFFFFF"
+        				android:drawSelectorOnTop="false" />
+				</RelativeLayout></RelativeLayout>
+				
+			<!--  third tab -->
+			<RelativeLayout android:id="@+id/tab3"
+				android:orientation="vertical" android:layout_width="match_parent"
+				android:layout_height="match_parent">
+				<WebView android:id="@+id/web" android:layout_width="match_parent"
+					android:layout_height="match_parent" />
+			</RelativeLayout>
+						
+			
                 </FrameLayout>
                 
         </LinearLayout>
