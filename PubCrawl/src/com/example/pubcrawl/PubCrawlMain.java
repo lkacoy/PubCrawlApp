@@ -6,10 +6,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
-import android.app.TabActivity;
 import android.content.Intent;
 
-public class PubCrawlMain extends TabActivity {
+public class PubCrawlMain extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
