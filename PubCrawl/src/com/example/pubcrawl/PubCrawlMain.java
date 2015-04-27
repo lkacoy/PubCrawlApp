@@ -15,10 +15,8 @@ import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.Toast;
 import android.widget.TabHost.TabSpec;
-import android.content.Intent;
 import android.webkit.WebView;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
@@ -47,7 +45,7 @@ public class PubCrawlMain extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pub_crawl_main);
 		
-		TabHost tabHost = (TabHost)findViewById(android.R.id.tabhost);
+		TabHost tabHost = (TabHost)findViewById(R.id.tabhost);
 		tabHost.setup();
 		TabHost.TabSpec spec;
 		
@@ -59,8 +57,7 @@ public class PubCrawlMain extends ListActivity {
 		
 		
 					
-		  myMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
-	              .getMap();           
+		  myMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();           
 	      myMap.setMyLocationEnabled(true);
 	      
 	      myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -87,17 +84,10 @@ public class PubCrawlMain extends ListActivity {
 			adapt = new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, things);
 	        setListAdapter(adapt);
 	        inputField = (EditText) findViewById(R.id.input);
-	        webView = (WebView) findViewById(R.id.web_view);
+	        webView = (WebView) findViewById(R.id.web);
 		    webView.getSettings().setJavaScriptEnabled(true);
-        TabSpec tab3 = tabHost.newTabSpec("Website");
-        
-
-
-        tab3.setIndicator("Tab3");
-        tab3.setContent(new Intent(this,Tab3Activity.class));
-
    
-        tabHost.addTab(tab3);
+        tabHost.addTab(spec);
 		
 	}
 	

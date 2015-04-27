@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+         android:id="@+id/tabhost"
          android:layout_width="fill_parent"
-         android:layout_height="fill_parent"
-          android:id="@android:id/tabhost">
+         android:layout_height="fill_parent">
+        
+          
          
         <LinearLayout 
                 android:id="@+id/LinearLayout01"
@@ -23,7 +24,7 @@
                      android:layout_width="fill_parent">
                      
                      <!-- first tab -->
-						<RelativeLayout android:id="@+id/tab1"
+						<LinearLayout android:id="@+id/tab1"
 						android:orientation="vertical" android:layout_width="match_parent"
 						android:layout_height="match_parent">
 				  <include 
@@ -31,13 +32,13 @@
         				android:layout_width="match_parent"
         				android:layout_height="match_parent"
         				layout="@layout/map_frag" />
-			</RelativeLayout>
+			</LinearLayout>
 			
 						<!--  second tab -->
-			<RelativeLayout android:id="@+id/tab2"
+			<LinearLayout android:id="@+id/tab2"
 				android:orientation="vertical" android:layout_width="match_parent"
 				android:layout_height="match_parent">
-				<RelativeLayout android:orientation="horizontal"
+				<LinearLayout android:orientation="horizontal"
 					android:layout_width="match_parent" android:layout_height="wrap_content">
 					<EditText
        					android:id="@+id/input"
@@ -50,18 +51,17 @@
         				android:id="@android:id/list"
         				android:layout_width="match_parent"
         				android:layout_height="match_parent"
-        				android:layout_below="@id/input"
         				android:background="#FFFFFFFF"
         				android:drawSelectorOnTop="false" />
-				</RelativeLayout></RelativeLayout>
+				</LinearLayout></LinearLayout>
 				
 			<!--  third tab -->
-			<RelativeLayout android:id="@+id/tab3"
+			<LinearLayout android:id="@+id/tab3"
 				android:orientation="vertical" android:layout_width="match_parent"
 				android:layout_height="match_parent">
 				<WebView android:id="@+id/web" android:layout_width="match_parent"
 					android:layout_height="match_parent" />
-			</RelativeLayout>
+			</LinearLayout>
 						
 			
                 </FrameLayout>
