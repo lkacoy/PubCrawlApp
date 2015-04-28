@@ -44,13 +44,13 @@ public class PubCrawlMain extends ListActivity {
        private GoogleMap myMap;
        private WebView webView;
        private TextView inputField;
+       private ListView listCrawl;
        private static final String tag = "Widgets";
        private ArrayList<String> things = new ArrayList<String>();
        private ArrayAdapter<String> adapt = null;
        private long lastTouchTimeDown = -1;     
        private long lastTouchTimeUp = -1;
        private static final float zoom = 14.0f;
-       private TextView text;
        
        private NotificationManager mNotificationManager; //sets up the notification system
        private Notification notifyDetails;
@@ -72,7 +72,7 @@ public class PubCrawlMain extends ListActivity {
        Handler handler = new Handler(){
               public void handleMessage(Message msg) {
                      String title =(String) msg.obj;
-                 //    text.append(title + "\n" +"\n");
+                     inputField.append(title + "\n" +"\n");
               }
        };
        
@@ -131,6 +131,7 @@ public class PubCrawlMain extends ListActivity {
                      adapt = new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, things);
                setListAdapter(adapt);
                inputField = (TextView) findViewById(R.id.input);
+               listCrawl=(ListView)findViewById(android.R.id.list);
                      
              //tab 3-------------------------------------------------------------Dedicated to a website that the user can view
                     
@@ -141,7 +142,6 @@ public class PubCrawlMain extends ListActivity {
                      
                      adapt = new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, things);
                setListAdapter(adapt);
-               inputField = (TextView) findViewById(R.id.input);
                webView = (WebView) findViewById(R.id.web);
                   webView.getSettings().setJavaScriptEnabled(true);
    
