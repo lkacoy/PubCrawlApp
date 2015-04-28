@@ -7,6 +7,7 @@ import android.app.ListActivity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -203,7 +204,31 @@ public class PubCrawlMain extends ListActivity {
 		
 		
 		    try{
-		    	JSONObject object=new JSONObject(JSONFeed);
+		    	JSONObject object=new JSONObject(JSONFeed); //creates a JSON object
+		    	
+		    	JSONArray businesses = new JSONArray();
+		    	businesses=object.getJSONArray("businesses");
+		    	Log.i("JSON","Number of entries "+ businesses.length()); //stores in the log the number of businesses
+		    	
+		    	//loop will generate list of bars and store name, city, and rating
+		    	//the information for name and city will be added to an array to be placed on the map
+		    	
+		    	for (int i=0; i<businesses.length(); i++){
+		    		JSONObject businessJSON = businesses.getJSONObject(i);
+		    		String name = businessJSON.getString("name");
+		    		double rating = businessJSON.getDouble("rating");
+		    		
+		    		JSONObject location=new JSONObject();
+		    		location=businessJSON.getJSONObject("location");
+		    		
+		    		String city=location.getString("city");  //gets the city for viewers
+		    		String information=name+", "+city+" - "+rating; //information will store each piece of data
+		    		
+		    		things.add(information);
+		    		Log.i("JSON", "Information is added to the array");
+		    	}
+		    	
+		    	
 		    }
 		    catch(JSONException e){e.getMessage();
 		    	e.printStackTrace();
