@@ -23,6 +23,7 @@ import android.webkit.WebView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.model.LatLng;
@@ -31,7 +32,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class PubCrawlMain extends ListActivity {
 
-	private GoogleMap myMap = null;
+	private GoogleMap myMap;
 	private WebView webView;
 	private TextView inputField;
 	private static final String tag = "Widgets";
@@ -70,12 +71,18 @@ public class PubCrawlMain extends ListActivity {
 		
 		
 					
-		  myMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();           
-	      myMap.setMyLocationEnabled(true);
+		myMap = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
+
+		myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+		myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.35,-71.18), zoom));
 	      
-	      myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL); //setting the map type to normal
-	      myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.3600, -71.0568), zoom)); //setting the default location of the map to Fanueil Hall
-	      
+		 myMap.setOnMapClickListener( 
+	        		new OnMapClickListener() {
+	        			public void onMapClick(LatLng point) {
+	        				Toast.makeText(getApplicationContext(), "Pub Crawl", Toast.LENGTH_SHORT).show(); 			
+	        			}
+	        		}
+	        		);
 	      
 	    //tab 2-------------------------------------------------------------Dedicated to our Crawl plan that the user can decide
 	      
