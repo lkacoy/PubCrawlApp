@@ -65,8 +65,8 @@ public class PubCrawlMain extends ListActivity {
 		  myMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();           
 	      myMap.setMyLocationEnabled(true);
 	      
-	      myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-	      myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(41.498370, -81.693883), zoom));
+	      myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL); //setting the map type to normal
+	      myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.3600, -71.0568), zoom)); //setting the default location of the map to Fanueil Hall
 	      
 	      
 	    //tab 2-------------------------------------------------------------
