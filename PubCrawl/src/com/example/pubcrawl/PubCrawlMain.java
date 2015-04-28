@@ -3,7 +3,6 @@
 import java.util.ArrayList;
 
 import com.example.pubcrawl.R;
-
 import android.app.ListActivity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -29,6 +28,9 @@ import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class PubCrawlMain extends ListActivity {
 
@@ -109,6 +111,9 @@ public class PubCrawlMain extends ListActivity {
 	        webView = (WebView) findViewById(R.id.web);
 		    webView.getSettings().setJavaScriptEnabled(true);
    
+		    //Create a background thread to run the Yelp API
+		    Thread t=new Thread(background);
+		    t.start();
         
 	}
 	
@@ -179,4 +184,34 @@ public class PubCrawlMain extends ListActivity {
 		   		   
 	    return false;
 	}
+	
+	Runnable background= new Runnable(){ //This is the background thread that will run the Yelp API
+
+		@Override
+		public void run() {
+			
+			//Yelp API keys (these are Lexi's keys)
+			String consumerKey = "y649aR90R2aZY2b3KDWKVQ";
+		    String consumerSecret = "h7ESEiDFcfo-ZuC5IApeXTJ9LBU";
+		    String token = "OUnZIyQiPPg6U1r-zqX7BrVNwzFcFu-j";
+		    String tokenSecret = "dKpT7ep2mOcoQJRQTjaTnA7Ft1M";
+		    
+		    int search_limit = 20;
+			
+		    Yelp yelp = new Yelp(consumerKey, consumerSecret, token, tokenSecret); //create a new Yelp object with the generated keys
+		    String JSONFeed = yelp.search("bar", 42.35,-71.18, search_limit); //searches for pub
+		
+		
+		    try{
+		    	JSONObject object=new JSONObject(JSONFeed);
+		    }
+		    catch(JSONException e){e.getMessage();
+		    	e.printStackTrace();
+		    }
+		    	
+		    
+		}
+		
+		
+	};
 }
