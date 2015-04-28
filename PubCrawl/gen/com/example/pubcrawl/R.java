@@ -372,6 +372,18 @@ theme attribute (in the form
 containing a value of this type.
          */
         public static final int useViewLifecycle=0x7f010013;
+        /**  Defines the set of transition to be used between activities 
+         <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>slide</code></td><td>1</td><td></td></tr>
+<tr><td><code>none</code></td><td>2</td><td></td></tr>
+</table>
+         */
+        public static final int windowTransitionStyle=0x7f010025;
         /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
 <p>This may also be a reference to a resource (in the form
 "<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
@@ -453,7 +465,7 @@ containing a value of this type.
         public static final int powered_by_google_light=0x7f020020;
     }
     public static final class id {
-        public static final int LinearLayout01=0x7f090018;
+        public static final int LinearLayout01=0x7f090019;
         public static final int adjust_height=0x7f090000;
         public static final int adjust_width=0x7f090001;
         public static final int book_now=0x7f090010;
@@ -466,8 +478,8 @@ containing a value of this type.
         public static final int holo_dark=0x7f090007;
         public static final int holo_light=0x7f090008;
         public static final int hybrid=0x7f090003;
-        public static final int input=0x7f09001c;
-        public static final int map=0x7f09001a;
+        public static final int input=0x7f09001d;
+        public static final int map=0x7f09001b;
         public static final int match_parent=0x7f09000e;
         public static final int monochrome=0x7f090016;
         public static final int none=0x7f090002;
@@ -476,13 +488,14 @@ containing a value of this type.
         public static final int sandbox=0x7f09000a;
         public static final int satellite=0x7f090005;
         public static final int selectionDetails=0x7f09000d;
+        public static final int slide=0x7f090017;
         public static final int strict_sandbox=0x7f09000b;
-        public static final int tab1=0x7f090019;
-        public static final int tab2=0x7f09001b;
-        public static final int tab3=0x7f09001d;
-        public static final int tabhost=0x7f090017;
+        public static final int tab1=0x7f09001a;
+        public static final int tab2=0x7f09001c;
+        public static final int tab3=0x7f09001e;
+        public static final int tabhost=0x7f090018;
         public static final int terrain=0x7f090006;
-        public static final int web=0x7f09001e;
+        public static final int web=0x7f09001f;
         public static final int wrap_content=0x7f09000f;
     }
     public static final class integer {
@@ -497,7 +510,7 @@ containing a value of this type.
     }
     public static final class string {
         public static final int accept=0x7f060002;
-        public static final int app_name=0x7f060023;
+        public static final int app_name=0x7f060026;
         /**   Text for notification shown when the Android Wear apps needs to be updated. Only shown on the wearable. [CHAR LIMIT=NONE] 
          */
         public static final int common_android_wear_notification_needs_update_text=0x7f060009;
@@ -567,6 +580,12 @@ containing a value of this type.
         /**   Title for notification shown when GooglePlayServices is unavailable [CHAR LIMIT=42] 
          */
         public static final int common_google_play_services_notification_ticker=0x7f060006;
+        /**  Message in confirmation dialog informing the user that the account could not be signed in. [CHAR LIMIT=NONE] 
+         */
+        public static final int common_google_play_services_sign_in_failed_text=0x7f060024;
+        /**  Title of confirmation dialog informing the user that the account could not be signed in. [CHAR LIMIT=40] 
+         */
+        public static final int common_google_play_services_sign_in_failed_title=0x7f060023;
         /**  Message in confirmation dialog informing user there is an unknown issue in Google Play
         services [CHAR LIMIT=NONE] 
          */
@@ -597,16 +616,19 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f060020;
+        /**  Message in confirmation dialog informing the user that one of the APIs they attepmt to access is not available. [CHAR LIMIT=NONE] 
+         */
+        public static final int commono_google_play_services_api_unavailable_text=0x7f060022;
         public static final int create_calendar_message=0x7f060005;
         public static final int create_calendar_title=0x7f060004;
         public static final int decline=0x7f060003;
-        public static final int hello_world=0x7f060024;
+        public static final int hello_world=0x7f060027;
         public static final int store_picture_message=0x7f060001;
         public static final int store_picture_title=0x7f060000;
         /**  Text on a placeholder buy button when Google Play services is not
          available or up-to-date 
          */
-        public static final int wallet_buy_button_place_holder=0x7f060022;
+        public static final int wallet_buy_button_place_holder=0x7f060025;
     }
     public static final class style {
         /** 
@@ -730,6 +752,38 @@ containing a value of this type.
           @attr name com.example.pubcrawl:adUnitId
         */
         public static final int AdsAttrs_adUnitId = 2;
+        /**  Attributes that can be specified to define a custom theme 
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #CustomWalletTheme_windowTransitionStyle com.example.pubcrawl:windowTransitionStyle}</code></td><td> Defines the set of transition to be used between activities </td></tr>
+           </table>
+           @see #CustomWalletTheme_windowTransitionStyle
+         */
+        public static final int[] CustomWalletTheme = {
+            0x7f010025
+        };
+        /**
+          <p>
+          @attr description
+           Defines the set of transition to be used between activities 
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>slide</code></td><td>1</td><td></td></tr>
+<tr><td><code>none</code></td><td>2</td><td></td></tr>
+</table>
+          <p>This is a private symbol.
+          @attr name com.example.pubcrawl:windowTransitionStyle
+        */
+        public static final int CustomWalletTheme_windowTransitionStyle = 0;
         /**  Attributes for LoadingImageView 
            <p>Includes the following attributes:</p>
            <table>

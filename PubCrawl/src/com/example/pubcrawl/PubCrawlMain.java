@@ -16,6 +16,8 @@ import android.widget.TabHost;
 import android.widget.Toast;
 import android.widget.TabHost.TabSpec;
 import android.webkit.WebView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
@@ -26,12 +28,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class PubCrawlMain extends ListActivity {
 
-	private GoogleMap myMap;
+	private GoogleMap myMap = null;
 	private WebView webView;
 	private EditText inputField;
 	private static final String tag = "Widgets";
 	private ArrayList<String> things = new ArrayList<String>();
 	private ArrayAdapter<String> adapt = null;
+	private long lastTouchTimeDown = -1; 	
+	private long lastTouchTimeUp = -1;
+	private static final float zoom = 14.0f;
 	
 	final int PICK1 = Menu.FIRST + 1;
 	final int PICK2 = Menu.FIRST + 2;
@@ -61,6 +66,8 @@ public class PubCrawlMain extends ListActivity {
 	      myMap.setMyLocationEnabled(true);
 	      
 	      myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+	      myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(41.498370, -81.693883), zoom));
+	      
 	      
 	    //tab 2-------------------------------------------------------------
 	      
@@ -87,8 +94,7 @@ public class PubCrawlMain extends ListActivity {
 	        webView = (WebView) findViewById(R.id.web);
 		    webView.getSettings().setJavaScriptEnabled(true);
    
-        tabHost.addTab(spec);
-		
+        
 	}
 	
 	 @Override
