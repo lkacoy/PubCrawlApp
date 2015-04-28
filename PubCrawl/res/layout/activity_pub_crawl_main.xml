@@ -40,7 +40,7 @@
 				android:layout_height="match_parent">
 				<LinearLayout android:orientation="horizontal"
 					android:layout_width="match_parent" android:layout_height="wrap_content">
-					<EditText
+					<TextView
        					android:id="@+id/input"
        					android:layout_width="match_parent"
        					android:layout_height="wrap_content"

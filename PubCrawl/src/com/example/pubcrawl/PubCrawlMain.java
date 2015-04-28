@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import com.example.pubcrawl.R;
 
 import android.app.ListActivity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.TabHost.TabSpec;
 import android.webkit.WebView;
@@ -30,13 +33,17 @@ public class PubCrawlMain extends ListActivity {
 
 	private GoogleMap myMap = null;
 	private WebView webView;
-	private EditText inputField;
+	private TextView inputField;
 	private static final String tag = "Widgets";
 	private ArrayList<String> things = new ArrayList<String>();
 	private ArrayAdapter<String> adapt = null;
 	private long lastTouchTimeDown = -1; 	
 	private long lastTouchTimeUp = -1;
 	private static final float zoom = 14.0f;
+	
+	private NotificationManager mNotificationManager; //sets up the notification system
+	private Notification notifyDetails;
+	private int SIMPLE_NOTFICATION_ID;
 	
 	final int PICK1 = Menu.FIRST + 1;
 	final int PICK2 = Menu.FIRST + 2;
@@ -48,13 +55,14 @@ public class PubCrawlMain extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_pub_crawl_main);
+		setContentView(R.layout.activity_pub_crawl_main); //sets the layout
+		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); //notification system created
 		
-		TabHost tabHost = (TabHost)findViewById(R.id.tabhost);
+		TabHost tabHost = (TabHost)findViewById(R.id.tabhost); //creates the tabhost for our app
 		tabHost.setup();
 		TabHost.TabSpec spec;
 		
-		//tab 1-------------------------------------------------------------
+		//tab 1-------------------------------------------------------------Dedicated to our map
 		spec=tabHost.newTabSpec("tag1");	//create new tab specification
 		spec.setContent(R.id.tab1);    //add tab view content
 		spec.setIndicator("Map");    //put text on tab
@@ -69,7 +77,7 @@ public class PubCrawlMain extends ListActivity {
 	      myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.3600, -71.0568), zoom)); //setting the default location of the map to Fanueil Hall
 	      
 	      
-	    //tab 2-------------------------------------------------------------
+	    //tab 2-------------------------------------------------------------Dedicated to our Crawl plan that the user can decide
 	      
 	      
 	      	spec=tabHost.newTabSpec("tag2");	//create new tab specification
@@ -79,9 +87,9 @@ public class PubCrawlMain extends ListActivity {
 			
 			adapt = new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, things);
 	        setListAdapter(adapt);
-	        inputField = (EditText) findViewById(R.id.input);
+	        inputField = (TextView) findViewById(R.id.input);
 			
-	      //tab 3-------------------------------------------------------------
+	      //tab 3-------------------------------------------------------------Dedicated to a website that the user can view
 		      
 	        spec=tabHost.newTabSpec("tag3");	//create new tab specification
 			spec.setContent(R.id.tab3);    //add tab view content
@@ -90,7 +98,7 @@ public class PubCrawlMain extends ListActivity {
 			
 			adapt = new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, things);
 	        setListAdapter(adapt);
-	        inputField = (EditText) findViewById(R.id.input);
+	        inputField = (TextView) findViewById(R.id.input);
 	        webView = (WebView) findViewById(R.id.web);
 		    webView.getSettings().setJavaScriptEnabled(true);
    
@@ -99,7 +107,7 @@ public class PubCrawlMain extends ListActivity {
 	
 	 @Override
 		public boolean onCreateOptionsMenu(Menu menu) {
-			
+			//Create the menu for the user to add, remove and edit crawl space
 			super.onCreateOptionsMenu(menu);
 			MenuItem item1 = menu.add(0, PICK1, Menu.NONE, "Add To Crawl");
 			MenuItem item2 = menu.add(0, PICK2, Menu.NONE, "Delete From Crawl");
