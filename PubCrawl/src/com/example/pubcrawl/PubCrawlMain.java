@@ -3,6 +3,8 @@ package com.example.pubcrawl;
 import java.util.ArrayList;
 
 import com.example.pubcrawl.R;
+
+
 import android.app.ListActivity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -38,8 +40,10 @@ import org.json.JSONObject;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.OnInitListener;
 
-public class PubCrawlMain extends ListActivity {
+public class PubCrawlMain extends ListActivity implements OnInitListener {
 
        private GoogleMap myMap;
        private WebView webView;
@@ -51,6 +55,7 @@ public class PubCrawlMain extends ListActivity {
        private long lastTouchTimeDown = -1;     
        private long lastTouchTimeUp = -1;
        private static final float zoom = 14.0f;
+       private TextToSpeech speaker;
        
        private NotificationManager mNotificationManager; //sets up the notification system
        private Notification notifyDetails;
@@ -114,7 +119,7 @@ public class PubCrawlMain extends ListActivity {
               super.onCreate(savedInstanceState);
               setContentView(R.layout.activity_pub_crawl_main); //sets the layout
               mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); //notification system created
-              
+              speaker = new TextToSpeech(this, this);
               
               TabHost tabHost = (TabHost)findViewById(R.id.tabhost); //creates the tabhost for our app
               tabHost.setup();
@@ -211,13 +216,17 @@ public class PubCrawlMain extends ListActivity {
                      blah = inputField.getText().toString();
                      things.add(blah);
                      adapt.notifyDataSetChanged();
+                     String addCrawl="Added to Crawl";
+                     speak(addCrawl);
                      return true;
                   }
                   case PICK2 : {
                      blah = inputField.getText().toString();
                      if(things.contains(blah)){
                      things.remove(blah);
-                     adapt.notifyDataSetChanged();}
+                     adapt.notifyDataSetChanged();
+                     String deleteCrawl="Deleted from Crawl";
+                     speak(deleteCrawl);}
                      
                      else{
                      Toast.makeText(this, "Please select which entry to delete first.", Toast.LENGTH_LONG).show();}
@@ -305,5 +314,15 @@ public void addMarkers(GoogleMap map) {
         .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
        
        
+}
+
+@Override
+public void onInit(int arg0) {
+	// TODO Auto-generated method stub
+	
+}
+
+public void speak(String output){
+	speaker.speak(output, TextToSpeech.QUEUE_FLUSH, null);
 }
 }
