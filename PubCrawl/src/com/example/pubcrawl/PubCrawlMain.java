@@ -1,10 +1,8 @@
 package com.example.pubcrawl;
 
+import java.io.IOException;
 import java.util.ArrayList;
-
-import com.example.pubcrawl.R;
-
-
+import java.util.List;
 import android.app.ListActivity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -37,6 +35,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -45,25 +46,27 @@ import android.speech.tts.TextToSpeech.OnInitListener;
 
 public class PubCrawlMain extends ListActivity implements OnInitListener {
 
-       private GoogleMap myMap;
-       private WebView webView;
-       private TextView inputField;
+       private GoogleMap myMap; //map will show where the pubs are located
+       private WebView webView; //will load the web pages of the bars
+       private TextView inputField; 
        private ListView listCrawl;
        private static final String tag = "Widgets";
        private ArrayList<String> things = new ArrayList<String>();
+       
        private ArrayAdapter<String> adapt = null;
        private long lastTouchTimeDown = -1;     
        private long lastTouchTimeUp = -1;
-       private static final float zoom = 14.0f;
-       private TextToSpeech speaker;
+       private static final float zoom = 14.0f; //camera will zoom to this level on the map
        
        private NotificationManager mNotificationManager; //sets up the notification system
        private Notification notifyDetails;
        private int SIMPLE_NOTFICATION_ID;
        
+       //the menu will let users add or delete bars from their crawl plan
        final int PICK1 = Menu.FIRST + 1;
        final int PICK2 = Menu.FIRST + 2;
        
+       //declaring the variables for the location
        LocationManager  locManager;
        LocationListener locListener;
       
@@ -71,9 +74,14 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
        String blah = "";
        int pos = 0;
        String zzz = "";
-       double lat = 42.3600;
+       double lat = 42.3600;  //default coordinates for Fanueil Hall
        double lon = -71.0568;
+       double longitude;
+       private TextToSpeech speaker; //declares a variable for the app to inform user that they are updated their list
+       int total=0; //total will print the total number of pubs in the area
        
+       
+       //Handles the message sent from the JSON to deliver the Yelp information 
        Handler handler = new Handler(){
               public void handleMessage(Message msg) {
                      String title =(String) msg.obj;
@@ -101,10 +109,12 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
    			lon = -71.0568;
    		}
 
+   		//If GPS enabled, notification to let user know it's enabled
    		@Override
    		public void onProviderEnabled(String provider) {
    			
-   			Toast.makeText(getApplicationContext(), "GPS Disabled", Toast.LENGTH_SHORT).show();
+   			Toast.makeText(getApplicationContext(), "GPS Enabled", Toast.LENGTH_SHORT).show(); //if GPS is on, a popup will let the user know
+   		
    		}
 
    		@Override
@@ -132,19 +142,26 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
               tabHost.addTab(spec);             //put tab in TabHost container
               
               locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+              locListener = new MyLocationListener();
+              locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0,
+      				locListener);
+              Location current = locManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
               
-            /**  locManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0,
-                           locListener);**/
+              if (current != null) {
+            	  lat = current.getLatitude();
+            	  lon = current.getLongitude();
+              }
               
               myMap = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
-
               myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
               myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lon), zoom));
-             
-               myMap.setOnMapClickListener( 
+              myMap.setMyLocationEnabled(true);
+              
+              myMap.setOnMapClickListener( 
                             new OnMapClickListener() {
                                   public void onMapClick(LatLng point) {
-                                         Toast.makeText(getApplicationContext(), "Pub Crawl", Toast.LENGTH_SHORT).show();                     
+                                       //  Toast.makeText(getApplicationContext(), "Pub Crawl", Toast.LENGTH_SHORT).show();  
+                                	  Toast.makeText(getApplicationContext(), "Total found: " + total, Toast.LENGTH_SHORT).show();  //toast will print out the number of bars
                                   }
                             }
                             );
@@ -162,7 +179,7 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
                      adapt = new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, things);
                setListAdapter(adapt);
                inputField = (TextView) findViewById(R.id.input);
-               listCrawl=(ListView)findViewById(android.R.id.list);
+               //listCrawl=(ListView)findViewById(android.R.id.list);
                      
              //tab 3-------------------------------------------------------------Dedicated to a website that the user can view
                     
@@ -173,7 +190,8 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
                      
                      adapt = new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, things);
                setListAdapter(adapt);
-               webView = (WebView) findViewById(R.id.web);
+               
+               	webView = (WebView) findViewById(R.id.web); //
                   webView.getSettings().setJavaScriptEnabled(true);
    
                   //Create a background thread to run the Yelp API
@@ -211,6 +229,7 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
                   
                   switch (itemID) {
                  
+                  //Let's the user add a bar to their crawl list (tab 2)
                   case PICK1 : {
                      
                      blah = inputField.getText().toString();
@@ -220,6 +239,8 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
                      speak(addCrawl);
                      return true;
                   }
+                  
+                  //Let's the user deleted from the crawl list (tab 2)
                   case PICK2 : {
                      blah = inputField.getText().toString();
                      if(things.contains(blah)){
@@ -229,7 +250,7 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
                      speak(deleteCrawl);}
                      
                      else{
-                     Toast.makeText(this, "Please select which entry to delete first.", Toast.LENGTH_LONG).show();}
+                     Toast.makeText(this, "Please select which entry to delete first.", Toast.LENGTH_LONG).show();} //makes sure the user selects an entry first
                      
                      return true;
                      
@@ -254,23 +275,25 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
                   int search_limit = 20;
                      
                   Yelp yelp = new Yelp(consumerKey, consumerSecret, token, tokenSecret); //create a new Yelp object with the generated keys
-                  String JSONFeed = yelp.search("bar", 42.35,-71.18, search_limit); //searches for pub
+                  String JSONFeed = yelp.search("bar", lat, lon, search_limit); //searches for pub
               
               
                   try{
-                                 
+                      //creates a JSON object to let us search for the information stored in Yelp API          
                      JSONObject obj = new JSONObject(JSONFeed);
                            
                            //get total of businesses in response without limit
-                           int total = obj.getInt("total");
+                           total = obj.getInt("total");
                            Log.i("JSON", "total " + total);
+                           //will show how many bars are found (hopefully...)
+                          // Toast.makeText(getApplicationContext(), "Total found: " + total, Toast.LENGTH_SHORT).show(); 
                                          
                            JSONArray businesses = new JSONArray();
                            businesses = obj.getJSONArray("businesses");
                            Log.i("JSON",
                                          "Number of entries " + businesses.length());
                            
-                           //for each array item get name and date
+                           //for each array item get name, location, rating
                            for (int i = 0; i < businesses.length(); i++) {
                                   JSONObject jsonObject = businesses.getJSONObject(i);
                                   String name = jsonObject.getString("name");
@@ -278,10 +301,15 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
                                
                                JSONObject location = new JSONObject();
                                location = jsonObject.getJSONObject("location");
-                               
+
                                String city = location.getString("city");
+                               String state = location.getString("state");
+                               String country = location.getString("country");
+                               String address = location.getString("location.address").concat(", ").concat(city).concat(", ").concat(state).concat(", ").concat(country);
                                
                                String data = name + ", " + city + " - " + rating;
+                               things.add(address);
+
                                
                                //sent to Handler queue 
                                Message msg = handler.obtainMessage();
@@ -304,25 +332,41 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
               
        };
        
+       //adds markers to the map to indicate where the pubs are located
 public void addMarkers(GoogleMap map) {
               
-       for (int i = 0; i < things.size(); i++)
+       for (int i = 0; i < things.size(); i++) {
+    	   Geocoder fwd = new Geocoder(this);
+    	   String streetAddr =things.get(i);
+    	   List<Address> locations = null;        //contains returned geoPoints
+    	   
+    	   try {
+			locations = fwd.getFromLocationName(streetAddr, 1);
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+    	   Address a = locations.get(i);
+
+
               map.addMarker(new MarkerOptions()
-        .position(new LatLng(41.498370,-81.693883))
-        .title("Terminal Tower")
-        .snippet("At the heart of the city")
-        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));
+        .position(new LatLng(a.getLatitude(),a.getLongitude()))
+        .title(things.get(i))
+        //.snippet("At the heart of the city")
+        .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));}
        
        
 }
 
 @Override
-public void onInit(int arg0) {
+public void onInit(int status) {
 	// TODO Auto-generated method stub
 	
 }
 
+//speak method to let the app notify user that things have been added/deleted from the crawl list on tab 2
 public void speak(String output){
 	speaker.speak(output, TextToSpeech.QUEUE_FLUSH, null);
 }
 }
+
