@@ -6,7 +6,9 @@ import java.util.List;
 import android.app.ListActivity;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -52,15 +54,19 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
        private ListView listCrawl;
        private static final String tag = "Widgets";
        private ArrayList<String> things = new ArrayList<String>();
-       
+       private ArrayList<String>urls= new ArrayList<String>();
+       private ArrayList<String>bars= new ArrayList<String>();
+    		   
        private ArrayAdapter<String> adapt = null;
        private long lastTouchTimeDown = -1;     
        private long lastTouchTimeUp = -1;
        private static final float zoom = 14.0f; //camera will zoom to this level on the map
        
-       private NotificationManager mNotificationManager; //sets up the notification system
-       private Notification notifyDetails;
+       private NotificationManager mNotificationManager; //sets up the notification manager
+       private Notification notifyDetails;				//variable to have the actual notification
        private int SIMPLE_NOTFICATION_ID;
+       private String contentTitle = "Pub Crawl";  //sets the title of the notification to the pub crawl
+       private String contentText = "Your plan has been successfully updated";
        
        //the menu will let users add or delete bars from their crawl plan
        final int PICK1 = Menu.FIRST + 1;
@@ -85,7 +91,7 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
        Handler handler = new Handler(){
               public void handleMessage(Message msg) {
                      String title =(String) msg.obj;
-                     inputField.append(title + "\n" +"\n");
+                     inputField.append(title+ "/n"+"/n");
               }
        };
        
@@ -128,10 +134,9 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
        protected void onCreate(Bundle savedInstanceState) {
               super.onCreate(savedInstanceState);
               setContentView(R.layout.activity_pub_crawl_main); //sets the layout
-              mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); //notification system created
               speaker = new TextToSpeech(this, this);
               
-              TabHost tabHost = (TabHost)findViewById(R.id.tabhost); //creates the tabhost for our app
+              final TabHost tabHost = (TabHost)findViewById(R.id.tabhost); //creates the tabhost for our app
               tabHost.setup();
               TabHost.TabSpec spec;
               
@@ -157,16 +162,34 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
               myMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lon), zoom));
               myMap.setMyLocationEnabled(true);
               
+              //adds markers to bars on the map
+              addMarkers(myMap);
+              
               myMap.setOnMapClickListener( 
                             new OnMapClickListener() {
                                   public void onMapClick(LatLng point) {
                                        //  Toast.makeText(getApplicationContext(), "Pub Crawl", Toast.LENGTH_SHORT).show();  
-                                	  Toast.makeText(getApplicationContext(), "Total found: " + total, Toast.LENGTH_SHORT).show();  //toast will print out the number of bars
+                                	  Toast.makeText(getApplicationContext(), "Total found: " + things.get(0), Toast.LENGTH_LONG).show();  //toast will print out the number of bars
+                                 
+                                	  
                                   }
                             }
                             );
               
-               
+              //On clicking a marker, will switch to tab 2 and go to Yelp page of bar
+              myMap.setOnMarkerClickListener( 
+  	        		new OnMarkerClickListener() {
+  	        			
+  	        			public boolean onMarkerClick(Marker m) {
+  	        				String title = m.getTitle();
+  	        				String snip = m.getSnippet();
+  	        				Toast.makeText(getApplicationContext(),  title, Toast.LENGTH_LONG).show();
+  	        				webView.loadUrl(snip);
+  	        				tabHost.setCurrentTab(2);
+  	        				return true;
+  	        			}
+  	        		}
+  	        		);
              
            //tab 2-------------------------------------------------------------Dedicated to our Crawl plan that the user can decide
              
@@ -197,7 +220,33 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
                   //Create a background thread to run the Yelp API
                   Thread t=new Thread(background);
                   t.start();
-        
+                  
+                  mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); //notification system created
+                  //Set up the intents for the notification system which will let users know when they added something or deleted from crawl
+                  Intent notifyIntent=new Intent(this,PubCrawlMain.class);
+                  
+                  //Pending intent to fire the notification when needed
+                  PendingIntent pendingIntent = PendingIntent.getActivity(
+          				this, 0, notifyIntent,
+          				android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                  
+                  
+                  notifyDetails=new Notification.Builder(this)
+                  			.setContentTitle(contentTitle) //set Notification title 
+                  			.setContentText(contentText)
+                  			.setSmallIcon(R.drawable.ic_launcher)
+                  			.setWhen(System.currentTimeMillis())
+                  			
+                  			//Set title, text and pending intent to fire when notify() executed
+                  			.addAction(R.drawable.ic_launcher, contentTitle,pendingIntent)
+                  			//set Android to vibrate when notified
+                  			.setVibrate(new long[] {100, 100, 200, 300})
+                  			//flash LED 
+                  			.setLights(Integer.MAX_VALUE,500,500)
+                  			.build();
+                  
+                  
+
        }
        
        @Override
@@ -295,27 +344,29 @@ public class PubCrawlMain extends ListActivity implements OnInitListener {
                            
                            //for each array item get name, location, rating
                            for (int i = 0; i < businesses.length(); i++) {
-                                  JSONObject jsonObject = businesses.getJSONObject(i);
-                                  String name = jsonObject.getString("name");
-                               double rating = jsonObject.getDouble("rating");
-                               
-                               JSONObject location = new JSONObject();
-                               location = jsonObject.getJSONObject("location");
-
-                               String city = location.getString("city");
-                               String state = location.getString("state");
-                               String country = location.getString("country");
-                               String address = location.getString("location.address").concat(", ").concat(city).concat(", ").concat(state).concat(", ").concat(country);
-                               
-                               String data = name + ", " + city + " - " + rating;
-                               things.add(address);
-
-                               
-                               //sent to Handler queue 
-                               Message msg = handler.obtainMessage();
-                               msg.obj = data;
-                               handler.sendMessage(msg);
-                               
+           					JSONObject jsonObject = businesses.getJSONObject(i);
+           					String name = jsonObject.getString("name");
+           				    double rating = jsonObject.getDouble("rating");
+           				    
+           				    JSONObject location = new JSONObject();
+           				    location = jsonObject.getJSONObject("location");
+           				    String streets=location.getString("cross_streets");
+           				    String state=location.getString("state_code");
+           				    String country=location.getString("country_code");
+           				    String addy = location.getString("address").substring(2, location.getString("address").length()-2);
+           				    String city = location.getString("city");
+           				    String data = addy + ", " + city + ", " + country;
+           				    String url =jsonObject.getString("mobile_url");
+           				    
+           				    urls.add(url);
+           				    things.add(data);
+           				    bars.add(name);
+           				    
+           				    //sent to Handler queue 
+           				    Message msg = handler.obtainMessage();
+           				    msg.obj = data;
+           				    handler.sendMessage(msg);
+           				    
                                   Log.i("JSON", data);
                                   
                      
@@ -351,8 +402,8 @@ public void addMarkers(GoogleMap map) {
 
               map.addMarker(new MarkerOptions()
         .position(new LatLng(a.getLatitude(),a.getLongitude()))
-        .title(things.get(i))
-        //.snippet("At the heart of the city")
+        .title(bars.get(i))
+        .snippet(urls.get(i))
         .icon(BitmapDescriptorFactory.fromResource(R.drawable.marker)));}
        
        
